@@ -7,7 +7,7 @@ import multiprocessing as mp
 def get_file_chunks(
     file_name: str,
     max_cpu: int = 8,
-) -> tuple[int, list[tuple[str, int, int]]]:
+):
     """Split flie into chunks"""
     cpu_count = min(max_cpu, mp.cpu_count())
 
@@ -15,7 +15,7 @@ def get_file_chunks(
     chunk_size = file_size // cpu_count
 
     start_end = list()
-    with open(file_name, encoding="utf-8", mode="r+b") as f:
+    with open(file_name, mode="r+b") as f:
 
         def is_new_line(position):
             if position == 0:
@@ -59,10 +59,10 @@ def _process_file_chunk(
     file_name: str,
     chunk_start: int,
     chunk_end: int,
-) -> dict:
+):
     """Process each file chunk in a different process"""
     result = dict()
-    with open(file_name, encoding="utf-8", mode="rb") as f:
+    with open(file_name, mode="rb") as f:
         f.seek(chunk_start)
         gc_disable()
         for line in f:
@@ -94,7 +94,7 @@ def _process_file_chunk(
 def process_file(
     cpu_count: int,
     start_end: list,
-) -> dict:
+):
     """Process data file"""
     with mp.Pool(cpu_count) as p:
         # Run chunks in parallel
